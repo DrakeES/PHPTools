@@ -63,7 +63,7 @@ class FileContentProcessor
     public function getNewContents()
     {
         if (!$this->_newTokens) {
-            $this->convert();
+            //$this->convert();
         }
         
         $contents = null;
@@ -247,7 +247,7 @@ class FileContentProcessor
             
             foreach ($classCount as $consumedClassName => $numberOfOccurances) {
                 if ($numberOfOccurances == 1) continue;
-                if ((strpos($consumedClassName, '\\') !== false) && (strpos($consumedClassName, $namespace) !== 0)) {
+                if ((strpos($consumedClassName, '\\') !== false) && $namespace !== '' && (strpos($consumedClassName, $namespace) !== 0)) {
                     $consumedClassFileNameProc = $this->_fileRegistry->findByNewFullyQualifiedName($consumedClassName);
                     $uses['declarations'][] = $ccn = $consumedClassFileNameProc->getNewNamespace();
                     $uses['translations'][$consumedClassName] = substr($ccn, strrpos($ccn, '\\')+1) . '\\'
@@ -294,7 +294,7 @@ class FileContentProcessor
                         $fileNameProc = $this->_fileRegistry->findByOriginalClassName($origConsumedClassName);
                         if ($fileNameProc) {
                             $newConsumedClass = $fileNameProc->getNewFullyQualifiedName();
-                            if (strpos($newConsumedClass, $namespace) === 0) {
+                            if ($namespace !== '' && strpos($newConsumedClass, $namespace) === 0) {
                                 $newConsumedClass = substr($newConsumedClass, strlen($namespace)+1);
                             } else {
                                 $newConsumedClass = '\\' . $newConsumedClass;
@@ -313,7 +313,7 @@ class FileContentProcessor
                         if (isset($uses['declarations']) && $uses['declarations'] && $newConsumedClass{0} == '\\') {
                             $declarationSearchClass = ltrim($newConsumedClass, '\\');
                             foreach ($uses['declarations'] as $declarationSearchMatch) {
-                                if (strpos($declarationSearchClass, $declarationSearchMatch) === 0) {
+                                if ($declarationSearchMatch !== '' && strpos($declarationSearchClass, $declarationSearchMatch) === 0) {
                                     $newConsumedClass = substr($declarationSearchMatch, strrpos($declarationSearchMatch, '\\')+1) . substr($declarationSearchClass, strlen($declarationSearchMatch));
                                 }
                             }
